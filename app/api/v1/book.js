@@ -1,19 +1,12 @@
 const Router = require("koa-router");
-const router = new Router();
+const router = new Router({
+  prefix: "/v1/book"
+});
 const { PositiveIntegerValidator } = require("../../validators/validator");
+const { Auth } = require("../../../middlewares/auth");
 
-router.post("/v1/:id/book/latest", async (ctx, next) => {
-  const params = ctx.params;
-  const query = ctx.request.query;
-  const header = ctx.request.header;
-  const body = ctx.request.body;
-
-  const v = await new PositiveIntegerValidator().validate(ctx);
-  const id = v.get("path.id", (parsed = false));
-
-  ctx.body = {
-    key: "book"
-  };
+router.get("/latest", new Auth().m, async (ctx, next) => {
+  ctx.body = ctx.auth.uid;
 });
 
 module.exports = router;
