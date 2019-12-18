@@ -3,7 +3,10 @@ const router = new Router({
   prefix: "/v1/token"
 });
 const { LoginType } = require("../../lib/enum");
-const { TokenValidator } = require("../../validators/validator");
+const {
+  TokenValidator,
+  NotEmptyValidator
+} = require("../../validators/validator");
 const { User } = require("../../models/user");
 const { generateToken } = require("../../../core/util");
 const { Auth } = require("../../../middlewares/auth");
@@ -25,6 +28,14 @@ router.post("/", async ctx => {
   }
   ctx.body = {
     token
+  };
+});
+
+router.post("/verify", async ctx => {
+  const v = await new NotEmptyValidator().validate(ctx);
+  const result = Auth.verifyToken(v.get("body.token"));
+  ctx.body = {
+    result
   };
 });
 

@@ -8,6 +8,14 @@ class Auth {
     Auth.ADMIN = 16;
     Auth.SUPER_ADMIN = 32;
   }
+  static verifyToken(token) {
+    try {
+      jwt.verify(token, global.config.security.secretKey);
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
 
   get m() {
     return async (ctx, next) => {

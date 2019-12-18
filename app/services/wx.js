@@ -9,7 +9,7 @@ class WXManager {
     const url = util.format(
       global.config.wx.loginUrl,
       global.config.wx.appId,
-      global.config.wx.secret,
+      global.config.wx.appSecret,
       code
     );
 
@@ -17,9 +17,10 @@ class WXManager {
     if (result.status !== 200) {
       throw new global.errs.AuthFailed("openid获取失败");
     }
-    const errCode = result.data.errcode;
-    if (errCode !== 0) {
-      throw new global.errs.AuthFailed("openid获取失败" + errCode);
+    const errcode = result.data.errcode;
+    const errmsg = result.data.errmsg;
+    if (errcode) {
+      throw new global.errs.AuthFailed("openid获取失败" + errmsg);
     }
     let user = await User.getUserByOpenid(result.data.openid);
     if (!user) {
