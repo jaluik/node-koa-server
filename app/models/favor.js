@@ -30,7 +30,26 @@ class Favor extends Model {
     });
   }
 
-  static async dislike(art_id, type) {}
+  static async dislike(art_id, type, uid) {
+    const favour = await Favor.findOne({
+      where: {
+        art_id,
+        type,
+        uid
+      }
+    });
+    if (!favour) {
+      throw new global.errs.DislikeError();
+    }
+    return sequelize.transaction(async t => {
+      await favour.destroy({
+        force: true,
+        transaction: t
+      });
+      const art = await Art.getData(art_id, type);
+      await art.decrement("fav_nums", { by: 1, transaction: t });
+    });
+  }
 }
 
 Favor.init(
