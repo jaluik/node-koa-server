@@ -50,6 +50,16 @@ class Favor extends Model {
       await art.decrement("fav_nums", { by: 1, transaction: t });
     });
   }
+  static async userLikeIt(art_id, type, uid) {
+    const favor = await Favor.findOne({
+      where: {
+        art_id,
+        type,
+        uid
+      }
+    });
+    return favor ? true : false;
+  }
 }
 
 Favor.init(
