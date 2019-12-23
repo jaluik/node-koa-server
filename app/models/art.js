@@ -1,8 +1,26 @@
-const { Movie, Music, Sentence } = require("./classic");
 const { Op } = require("Sequelize");
 const { flatten } = require("lodash");
 
+const { Movie, Music, Sentence } = require("./classic");
 class Art {
+  constructor(art_id, type) {
+    this.art_id = art_id;
+    this.type = type;
+  }
+
+  async getDetail(uid) {
+    const art = await Art.getData(this.art_id, Number(this.type));
+    if (!this.type) {
+      throw new global.errs.NotFound();
+    }
+    const { Favor } = require("./favor");
+    const like = await Favor.userLikeIt(this.art_id, Number(this.type), uid);
+    return {
+      art,
+      like_status: like
+    };
+  }
+
   static async getList(artInfoList) {
     const artInfoObj = {
       100: [],
@@ -35,13 +53,13 @@ class Art {
     const scope = "bh";
     switch (type) {
       case 100:
-        art = await Movie.scope(scope).findOne(finder);
+        arts = await Movie.findAll(finder);
         break;
       case 200:
-        art = await Music.scope(scope).findOne(finder);
+        arts = await Music.findAll(finder);
         break;
       case 300:
-        art = await Sentence.scope(scope).findOne(finder);
+        arts = await Sentence.findAll(finder);
         break;
       case 400:
         break;
@@ -61,13 +79,13 @@ class Art {
     const scope = useScope ? "bh" : null;
     switch (type) {
       case 100:
-        art = await Movie.scope(scope).findOne(finder);
+        art = await Movie.findOne(finder);
         break;
       case 200:
-        art = await Music.scope(scope).findOne(finder);
+        art = await Music.findOne(finder);
         break;
       case 300:
-        art = await Sentence.scope(scope).findOne(finder);
+        art = await Sentence.findOne(finder);
         break;
       case 400:
         break;

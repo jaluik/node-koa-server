@@ -62,7 +62,7 @@ class Favor extends Model {
   }
 
   static async getMyClassicFavors(uid) {
-    const arts = Favor.findAll({
+    const arts = await Favor.findAll({
       where: {
         uid,
         type: {
