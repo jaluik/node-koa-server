@@ -3,12 +3,20 @@ const router = new Router({
   prefix: "/v1/book"
 });
 const { HotBook } = require("../../models/hot-book");
+const { Book } = require("../../models/book");
+const { PositiveIntegerValidator } = require("../../validators/validator");
 
 router.get("/hot_list", async (ctx, next) => {
-  const favors = await HotBook.getAll();
+  const books = await HotBook.getAll();
   ctx.body = {
-    book: favors
+    books
   };
+});
+
+router.get("/:id/detail", async ctx => {
+  const v = await new PositiveIntegerValidator().validate(ctx);
+  const book = new Book(v.get("path.id"));
+  ctx.body = await book.getDetail();
 });
 
 module.exports = router;
