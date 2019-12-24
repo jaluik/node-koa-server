@@ -13,6 +13,18 @@ class Book extends Model {
     const detail = await axios.get(url);
     return detail.data;
   }
+
+  static async searchFromYuShu(q, start, count, summary = 1) {
+    const url = util.format(
+      global.config.yushu.keywordUrl,
+      encodeURI(q),
+      start,
+      count,
+      summary
+    );
+    const result = await axios.get(url);
+    return result.data;
+  }
 }
 
 Book.init(
