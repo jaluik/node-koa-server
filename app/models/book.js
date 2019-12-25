@@ -14,12 +14,12 @@ class Book extends Model {
     return detail.data;
   }
 
-  static async searchFromYuShu(q, start, count, summary = 1) {
+  static async searchFromYuShu(q, count, start, summary = 1) {
     const url = util.format(
       global.config.yushu.keywordUrl,
       encodeURI(q),
-      start,
       count,
+      start,
       summary
     );
     const result = await axios.get(url);
