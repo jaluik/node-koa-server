@@ -58,4 +58,17 @@ router.post("/add/short_comment", new Auth().m, async ctx => {
   success();
 });
 
+router.get("/:book_id/short_comment", new Auth().m, async ctx => {
+  const v = await new PositiveIntegerValidator().validate(ctx, {
+    id: "book_id"
+  });
+  const books = await Comment.getComment(v.get("path.book_id"));
+  ctx.body = books;
+});
+
+router.get("/hot_keyword", async ctx => {
+  ctx.body = {
+    hot: ["python", "哈利波特"]
+  };
+});
 module.exports = router;

@@ -1,4 +1,5 @@
-const Sequelize = require("sequelize");
+const { Sequelize, Model } = require("sequelize");
+const { unset } = require("lodash");
 const {
   dbName,
   host,
@@ -18,7 +19,7 @@ const sequelize = new Sequelize(dbName, user, password, {
     //   create_time , update_time
     timestamps: true,
     paranoid: true,
-    createAt: "create_at",
+    createAt: "createAt",
     updateAt: "update_at",
     deleteAt: "delete_at",
     underscored: true
@@ -28,6 +29,20 @@ const sequelize = new Sequelize(dbName, user, password, {
 sequelize.sync({
   force: false
 });
+
+Model.prototype.toJSON = function() {
+  let data = { ...this.dataValues };
+  unset(data, "updatedAt");
+  unset(data, "createdAt");
+  unset(data, "deletedAt");
+  if (Array.isArray(this.exclude)) {
+    this.exclude.forEach(item => {
+      unset(data, item);
+    });
+  }
+
+  return data;
+};
 
 module.exports = {
   sequelize
