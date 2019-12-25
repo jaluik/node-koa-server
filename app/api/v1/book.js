@@ -6,8 +6,13 @@ const { HotBook } = require("../../models/hot-book");
 const { Book } = require("../../models/book");
 const {
   PositiveIntegerValidator,
-  SearchValidator
+  SearchValidator,
+  AddShortCommentValidator
 } = require("../../validators/validator");
+const { Auth } = require("../../../middlewares/auth");
+const { Favor } = require("../../models/favor");
+const { Comment } = require("../../models/book-comment");
+const { success } = require("../../lib/helper");
 
 router.get("/hot_list", async (ctx, next) => {
   const books = await HotBook.getAll();
@@ -30,6 +35,27 @@ router.get("/search", async ctx => {
     v.get("query.start")
   );
   ctx.body = result;
+});
+
+router.get("/favor/count", new Auth().m, async ctx => {
+  const count = await Book.getMyFavorBookCount(ctx.auth.uid);
+  ctx.body = { count };
+});
+
+router.get("/:book_id/favor", new Auth().m, async ctx => {
+  const v = await new PositiveIntegerValidator().validate(ctx, {
+    id: "book_id"
+  });
+  const favor = await Favor.getBookFavor(ctx.auth.uid, v.get("path.book_id"));
+  ctx.body = favor;
+});
+
+router.post("/add/short_comment", new Auth().m, async ctx => {
+  const v = await new AddShortCommentValidator().validate(ctx, {
+    id: "book_id"
+  });
+  await Comment.addComment(v.get("body.book_id"), v.get("body.content"));
+  success();
 });
 
 module.exports = router;
