@@ -16,15 +16,13 @@ const { success } = require("../../lib/helper");
 
 router.get("/hot_list", async (ctx, next) => {
   const books = await HotBook.getAll();
-  ctx.body = {
-    books
-  };
+  ctx.body = books;
 });
 
 router.get("/:id/detail", async ctx => {
   const v = await new PositiveIntegerValidator().validate(ctx);
-  const book = new Book(v.get("path.id"));
-  ctx.body = await book.getDetail();
+  const book = new Book();
+  ctx.body = await book.getDetail(v.get("path.id"));
 });
 
 router.get("/search", async ctx => {
@@ -62,8 +60,11 @@ router.get("/:book_id/short_comment", new Auth().m, async ctx => {
   const v = await new PositiveIntegerValidator().validate(ctx, {
     id: "book_id"
   });
-  const books = await Comment.getComment(v.get("path.book_id"));
-  ctx.body = books;
+  const comments = await Comment.getComment(v.get("path.book_id"));
+  ctx.body = {
+    comments,
+    book_id: v.get("path.book_id")
+  };
 });
 
 router.get("/hot_keyword", async ctx => {

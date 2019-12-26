@@ -88,6 +88,14 @@ class Art {
         art = await Sentence.findOne(finder);
         break;
       case 400:
+        const { Book } = require("./book");
+        art = await Book.findOne(finder);
+        if (!art) {
+          art = await Book.create({
+            id: art_id
+          });
+        }
+
         break;
       default:
         break;
