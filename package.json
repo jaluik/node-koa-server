@@ -20,7 +20,7 @@
     "lodash": "^4.17.15",
     "mysql2": "^2.0.2",
     "require-directory": "^2.1.1",
-    "sequelize": "^5.21.3",
+    "sequelize": "^6.28.2",
     "validator": "^13.7.0"
   }
 }
